@@ -1,4 +1,5 @@
 require "htmlentities"
+
 module Requester
   def select_main_menu_action
     @options = %w[random scores exit]
@@ -28,28 +29,30 @@ module Requester
     puts "#{'' * 10} | Difficulty: #{questionrand['difficulty']}"
     puts "Question: #{@coder.decode(questionrand['question'])}"
     questionrand["type"] == "multiple" ? if_multiple(questionrand) : if_boolean(questionrand)
-    # show category and difficulty from question
-    # show the question
-    # show each one of the options
-    # grab user input
   end
 
   def if_boolean(question)
     array_to_string = question["incorrect_answers"].join(", ")
-    all_answers = @coder.decode(array_to_string) + ", #{question['correct_answer']}"
-    shuffle_answers = all_answers.split(", ").shuffle
+    all_answers = array_to_string + ", #{question['correct_answer']}"
+    shuffle_answers = @coder.decode(all_answers).split(", ").shuffle
     puts "1. #{shuffle_answers[0]}"
     puts "2. #{shuffle_answers[1]}"
+    print ">"
+    input = gets.chomp.to_i
+    answer(question, input, shuffle_answers)
   end
 
   def if_multiple(question)
     array_to_string = question["incorrect_answers"].join(", ")
-    all_answers = @coder.decode(array_to_string) + ", #{question['correct_answer']}"
-    shuffle_answers = all_answers.split(", ").shuffle
+    all_answers = array_to_string + ", #{question['correct_answer']}"
+    shuffle_answers = @coder.decode(all_answers).split(", ").shuffle
     puts "1. #{shuffle_answers[0]}"
     puts "2. #{shuffle_answers[1]}"
     puts "3. #{shuffle_answers[2]}"
     puts "4. #{shuffle_answers[3]}"
+    print "> "
+    input = gets.chomp.to_i
+    answer(question, input, shuffle_answers)
   end
 
   def will_save?(score)

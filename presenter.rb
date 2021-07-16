@@ -1,3 +1,4 @@
+require "terminal-table"
 module Presenter
   def print_welcome
     message = ["###################################",
@@ -7,6 +8,16 @@ module Presenter
   end
 
   def print_score(score)
-    # print the score message
+    table = Terminal::Table.new
+    table.title = "Top Scores"
+    table.headings = %w[Name Score]
+    table.rows = sort_by_score(score).map do |i|
+      [i["name"], i["score"]]
+    end
+    table
+  end
+
+  def sort_by_score(scores)
+    scores.sort_by { |k| k[:score] }.reverse
   end
 end

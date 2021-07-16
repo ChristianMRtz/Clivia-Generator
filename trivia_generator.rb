@@ -1,7 +1,12 @@
+require_relative "presenter"
+require_relative "requester"
+require_relative "questions"
 # do not forget to require your gem dependencies
 # do not forget to require_relative your local dependencies
 
 class TriviaGenerator
+  include Requester
+  include Presenter
   # maybe we need to include a couple of modules?
 
   def initialize
@@ -9,14 +14,25 @@ class TriviaGenerator
   end
 
   def start
-    # welcome message
-    # prompt the user for an action
-    # keep going until the user types exit
+    puts print_welcome
+    menu
+  end
+
+  def menu
+    action = select_main_menu_action
+    until action == "exit"
+      case action
+      when "random" then random_trivia
+      when "scores" then puts "scoreeeees"
+      end
+      action = select_main_menu_action
+    end
   end
 
   def random_trivia
-    # load the questions from the api
-    # questions are loaded, then let's ask them
+    print "loading..."
+    response = QuestionsData.data_of_api
+    ask_question(response.parsed_response)
   end
 
   def ask_questions
@@ -36,7 +52,6 @@ class TriviaGenerator
 
   def load_questions
     # ask the api for a random set of questions
-    parse_questions
   end
 
   def parse_questions

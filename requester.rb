@@ -1,4 +1,5 @@
 require "htmlentities"
+
 module Requester
   def select_main_menu_action
     @options = %w[random scores exit]
@@ -38,7 +39,7 @@ module Requester
     puts "2. #{shuffle_answers[1]}"
     print ">"
     input = gets.chomp.to_i
-    p answer(question, input, shuffle_answers)
+    answer(question, input, shuffle_answers)
   end
 
   def if_multiple(question)
@@ -49,17 +50,9 @@ module Requester
     puts "2. #{shuffle_answers[1]}"
     puts "3. #{shuffle_answers[2]}"
     puts "4. #{shuffle_answers[3]}"
-    print ">"
+    print "> "
     input = gets.chomp.to_i
-    p answer(question, input, shuffle_answers)
-  end
-
-  def answer(question, input, shuffle_answers)
-    if question["correct_answer"] == shuffle_answers[input - 1]
-      "Correct!!!"
-    else
-      "Incorrect :("
-    end
+    answer(question, input, shuffle_answers)
   end
 
   def will_save?(score)

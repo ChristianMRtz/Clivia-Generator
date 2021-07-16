@@ -1,6 +1,23 @@
 module Requester
   def select_main_menu_action
-    # prompt the user for the "random | scores | exit" actions
+    @options = %w[random scores exit]
+    puts @options.join(" | ")
+    print "> "
+    input = gets.chomp.strip.downcase
+    until @options.include? input
+      puts "invalid option"
+      puts @options.join(" | ")
+      print "> "
+      input = gets.chomp.strip.downcase
+    end
+    input
+  end
+
+  def valid_menu_option(action)
+    until @options.include? action
+      puts "invalid option"
+      action = select_main_menu_action
+    end
   end
 
   def ask_question(question)

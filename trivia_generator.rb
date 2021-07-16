@@ -1,17 +1,24 @@
+require "json"
+require "terminal-table"
+require "httparty"
 require_relative "presenter"
 require_relative "requester"
-require_relative "questions"
+
 # do not forget to require your gem dependencies
 # do not forget to require_relative your local dependencies
 
 class TriviaGenerator
+  include HTTParty
   include Requester
   include Presenter
+
+  base_uri "https://opentdb.com/"
   # maybe we need to include a couple of modules?
 
   def initialize
     @counter = 0
     @counter_to_finish = 0
+    @id = 0
     # we need to initialize a couple of properties here
   end
 
@@ -21,17 +28,21 @@ class TriviaGenerator
     until action == "exit"
       case action
       when "random" then random_trivia
-      when "scores" then puts "scoreeeees"
+      when "scores" then print_table_scores
       end
       action = select_main_menu_action
     end
   end
 
+  def data_of_api
+    @data = self.class.get("/api.php?amount=10")
+  end
+
   def random_trivia
     print "loading..."
-    response = QuestionsData.data_of_api
-    10.times { ask_question(response.parsed_response) }
-    @counter_to_finish == 10 ? game_over : ""
+    response = data_of_api
+    ask_question(response.parsed_response)
+    @counter_to_finish == 10 ? game_over : random_trivia
   end
 
   def answer(question, input, shuffle_answers)
@@ -47,6 +58,7 @@ class TriviaGenerator
   end
 
   def game_over
+    @counter_to_finish = 0
     puts "Well done! Your score is #{@counter}"
     puts "-" * 50
     print "Do you want to save your score? y/n "
@@ -61,23 +73,28 @@ class TriviaGenerator
     end
   end
 
-  def ask_questions
-    # ask each question
-    # if response is correct, put a correct message and increase score
-    # if response is incorrect, put an incorrect message, and which was the correct answer
-    # once the questions end, show user's score and promp to save it
-  end
-
   def save
     puts "Type the name to assign to the score"
     print "> "
-    input = gets.chomp.strip
-    puts input # FOR THE FILE OF JSONNNNNNNNNNNNNNNNNNNN
+    @input_name = gets.chomp.strip
+    @id += 1
+    to_json
     start
   end
 
-  def parse_scores
-    # get the scores data from file
+  def to_json(*_args)
+    player_score = {
+      name: @input_name,
+      score: @counter
+    }
+    parsed = JSON.parse(File.read("score.json"))
+    parsed["player"] << player_score
+    File.write("score.json", parsed.to_json)
+  end
+
+  def print_table_scores
+    parsed = JSON.parse(File.read("score.json"))
+    puts print_score(parsed["player"])
   end
 
   def load_questions

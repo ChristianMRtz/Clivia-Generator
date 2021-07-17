@@ -5,12 +5,12 @@ module Requester
     @options = %w[random custom scores exit]
     puts @options.join(" | ")
     print "> "
-    input = gets.chomp.strip.downcase
+    input = $stdin.gets.chomp.strip.downcase
     until @options.include? input
       puts "invalid option"
       puts @options.join(" | ")
       print "> "
-      input = gets.chomp.strip.downcase
+      input = $stdin.gets.chomp.strip.downcase
     end
     input
   end
@@ -38,7 +38,7 @@ module Requester
     puts "1. #{shuffle_answers[0]}"
     puts "2. #{shuffle_answers[1]}"
     print "> "
-    input = gets.chomp.to_i
+    input = $stdin.gets.chomp.to_i
     answer(question, input, shuffle_answers)
   end
 
@@ -51,7 +51,7 @@ module Requester
     puts "3. #{shuffle_answers[2]}"
     puts "4. #{shuffle_answers[3]}"
     print "> "
-    input = gets.chomp.to_i
+    input = $stdin.gets.chomp.to_i
     answer(question, input, shuffle_answers)
   end
 end

@@ -11,46 +11,48 @@ class TriviaGenerator
 
   base_uri "https://opentdb.com/"
 
-  def initialize
+  def initialize(file = ARGV)
     @counter = 0
     @counter_to_finish = 0
     @custom = ""
+    @file = file
+    File.open("score.json", "w")
   end
 
   def start
     puts print_welcome
     action = select_main_menu_action
-    until action == "exit"
+    until action == "Salir"
       case action
       when "random" then random_trivia
       when "scores" then print_table_scores
       when "custom" then custom_option
+      when "exit" then exit
       end
-      action == exit ? exit : select_main_menu_action
+      action == select_main_menu_action
     end
   end
 
   def custom_option
     puts "select a category id (between 9 and 32)"
     print "> "
-    category = gets.chomp.to_i
+    category = $stdin.gets.chomp.to_i
     until category >= 9 && category <= 32
       print "> "
-      category = gets.chomp.to_i
+      category = $stdin.gets.chomp.to_i
     end
     puts "select a difficulty (easy, medium or hard)"
     print "> "
-    difficulty = gets.chomp.strip
+    difficulty = $stdin.gets.chomp.strip
     until %w[easy medium hard].include?(difficulty)
       print "> "
-      difficulty = gets.chomp.strip
+      difficulty = $stdin.gets.chomp.strip
     end
     @custom = "&category=#{category}&difficulty=#{difficulty}"
     random_trivia
   end
 
   def data_of_api
-    # "&category=18&difficulty=medium"
     @data = self.class.get("/api.php?amount=10#{@custom}")
   end
 
@@ -78,47 +80,47 @@ class TriviaGenerator
     puts "Well done! Your score is #{@counter}"
     puts "-" * 50
     print "Do you want to save your score? y/n "
-    input = gets.chomp.strip.downcase
+    input = $stdin.gets.chomp.strip.downcase
     until input == "n"
       case input
       when "y" then save
       else puts "Invalid option "
            print "Do you want to save your score? y/n "
-           input = gets.chomp.strip.downcase
+           input = $stdin.gets.chomp.strip.downcase
       end
     end
+    start
   end
 
   def save
     puts "Type the name to assign to the score"
     print "> "
-    @input_name = gets.chomp.strip
+    @input_name = $stdin.gets.chomp.strip
     @input_name.empty? ? @input_name = "Anonymous" : @input_name
     to_json
     start
   end
 
   def to_json(*_args)
-    player_score = {
-      name: @input_name,
-      score: @counter
-    }
-    if File.read("score.json").empty?
+    file = @file.empty? ? "score.json" : @file[0]
+    player_score = { name: @input_name, score: @counter }
+    if File.read(file).empty?
       player_score = [{ name: @input_name, score: @counter }]
-      File.write("score.json", player_score.to_json)
+      File.write(file, player_score.to_json)
     else
-      parsed = JSON.parse(File.read("score.json"))
+      parsed = JSON.parse(File.read(file))
       parsed << player_score
-      File.write("score.json", parsed.to_json)
+      File.write(file, parsed.to_json)
     end
   end
 
   def print_table_scores
-    if File.read("score.json").empty?
+    file = @file.empty? ? "score.json" : @file[0]
+    file == @file[0] ? File.open(file, "w") : file
+    if File.read(file).empty?
       puts print_score([{ "name" => "<Nobody>", "score" => 0 }])
     else
-      parsed = JSON.parse(File.read("score.json"))
-      pp parsed
+      parsed = JSON.parse(File.read(file))
       puts print_score(parsed)
     end
     start

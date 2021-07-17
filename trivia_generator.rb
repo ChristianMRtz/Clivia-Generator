@@ -22,7 +22,7 @@ class TriviaGenerator
   def start
     puts print_welcome
     action = select_main_menu_action
-    until action == "Salir"
+    until action == "exit "
       case action
       when "random" then random_trivia
       when "scores" then print_table_scores

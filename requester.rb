@@ -2,7 +2,7 @@ require "htmlentities"
 
 module Requester
   def select_main_menu_action
-    @options = %w[random scores exit]
+    @options = %w[random custom scores exit]
     puts @options.join(" | ")
     print "> "
     input = gets.chomp.strip.downcase

@@ -14,6 +14,7 @@ class TriviaGenerator
   def initialize
     @counter = 0
     @counter_to_finish = 0
+    @custom = ""
   end
 
   def start
@@ -23,13 +24,34 @@ class TriviaGenerator
       case action
       when "random" then random_trivia
       when "scores" then print_table_scores
+      when "custom" then custom_option
       end
       action == exit ? exit : select_main_menu_action
     end
   end
 
+  def custom_option
+    puts "select a category id (between 9 and 32)"
+    print "> "
+    category = gets.chomp.to_i
+    until category >= 9 && category <= 32
+      print "> "
+      category = gets.chomp.to_i
+    end
+    puts "select a difficulty (easy, medium or hard)"
+    print "> "
+    difficulty = gets.chomp.strip
+    until %w[easy medium hard].include?(difficulty)
+      print "> "
+      difficulty = gets.chomp.strip
+    end
+    @custom = "&category=#{category}&difficulty=#{difficulty}"
+    random_trivia
+  end
+
   def data_of_api
-    @data = self.class.get("/api.php?amount=10")
+    # "&category=18&difficulty=medium"
+    @data = self.class.get("/api.php?amount=10#{@custom}")
   end
 
   def random_trivia
@@ -93,7 +115,7 @@ class TriviaGenerator
 
   def print_table_scores
     if File.read("score.json").empty?
-      puts print_score([{"name"=>"<Nobody>", "score"=>0}])
+      puts print_score([{ "name" => "<Nobody>", "score" => 0 }])
     else
       parsed = JSON.parse(File.read("score.json"))
       pp parsed

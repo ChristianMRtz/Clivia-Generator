@@ -38,6 +38,7 @@ class TriviaGenerator
     print "> "
     category = $stdin.gets.chomp.to_i
     until category >= 9 && category <= 32
+      puts "select a category id (between 9 and 32)"
       print "> "
       category = $stdin.gets.chomp.to_i
     end
@@ -45,6 +46,7 @@ class TriviaGenerator
     print "> "
     difficulty = $stdin.gets.chomp.strip
     until %w[easy medium hard].include?(difficulty)
+      puts "select a difficulty (easy, medium or hard)"
       print "> "
       difficulty = $stdin.gets.chomp.strip
     end

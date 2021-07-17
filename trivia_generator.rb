@@ -16,7 +16,6 @@ class TriviaGenerator
     @counter_to_finish = 0
     @custom = ""
     @file = file
-    File.open("score.json", "w")
   end
 
   def start
@@ -105,6 +104,7 @@ class TriviaGenerator
 
   def to_json(*_args)
     file = @file.empty? ? "score.json" : @file[0]
+    File.exist?("score.json") ? file : File.open(file, "w")
     player_score = { name: @input_name, score: @counter }
     if File.read(file).empty?
       player_score = [{ name: @input_name, score: @counter }]
@@ -119,6 +119,7 @@ class TriviaGenerator
   def print_table_scores
     file = @file.empty? ? "score.json" : @file[0]
     file == @file[0] ? File.open(file, "w") : file
+    File.exist?("score.json") ? file : File.open(file, "w")
     if File.read(file).empty?
       puts print_score([{ "name" => "<Nobody>", "score" => 0 }])
     else

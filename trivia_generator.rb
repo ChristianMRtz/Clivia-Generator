@@ -30,7 +30,7 @@ class TriviaGenerator
       when "random" then random_trivia
       when "scores" then print_table_scores
       end
-      action = select_main_menu_action
+      action == exit ? exit : select_main_menu_action
     end
   end
 
@@ -95,18 +95,7 @@ class TriviaGenerator
   def print_table_scores
     parsed = JSON.parse(File.read("score.json"))
     puts print_score(parsed["player"])
-  end
-
-  def load_questions
-    # ask the api for a random set of questions
-  end
-
-  def parse_questions
-    # questions came with an unexpected structure, clean them to make it usable for our purposes
-  end
-
-  def print_scores
-    # print the scores sorted from top to bottom
+    start
   end
 end
 

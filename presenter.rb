@@ -18,6 +18,6 @@ module Presenter
   end
 
   def sort_by_score(scores)
-    scores.sort_by { |k| k[:score] }.reverse
+    scores.sort_by { |k| k["score"] }.reverse.first(5)
   end
 end

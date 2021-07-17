@@ -4,22 +4,16 @@ require "httparty"
 require_relative "presenter"
 require_relative "requester"
 
-# do not forget to require your gem dependencies
-# do not forget to require_relative your local dependencies
-
 class TriviaGenerator
   include HTTParty
   include Requester
   include Presenter
 
   base_uri "https://opentdb.com/"
-  # maybe we need to include a couple of modules?
 
   def initialize
     @counter = 0
     @counter_to_finish = 0
-    @id = 0
-    # we need to initialize a couple of properties here
   end
 
   def start
@@ -77,7 +71,7 @@ class TriviaGenerator
     puts "Type the name to assign to the score"
     print "> "
     @input_name = gets.chomp.strip
-    @id += 1
+    @input_name.empty? ? @input_name = "Anonymous" : @input_name
     to_json
     start
   end
@@ -87,14 +81,24 @@ class TriviaGenerator
       name: @input_name,
       score: @counter
     }
-    parsed = JSON.parse(File.read("score.json"))
-    parsed["player"] << player_score
-    File.write("score.json", parsed.to_json)
+    if File.read("score.json").empty?
+      player_score = [{ name: @input_name, score: @counter }]
+      File.write("score.json", player_score.to_json)
+    else
+      parsed = JSON.parse(File.read("score.json"))
+      parsed << player_score
+      File.write("score.json", parsed.to_json)
+    end
   end
 
   def print_table_scores
-    parsed = JSON.parse(File.read("score.json"))
-    puts print_score(parsed["player"])
+    if File.read("score.json").empty?
+      puts print_score([{"name"=>"<Nobody>", "score"=>0}])
+    else
+      parsed = JSON.parse(File.read("score.json"))
+      pp parsed
+      puts print_score(parsed)
+    end
     start
   end
 end

@@ -119,7 +119,7 @@ class TriviaGenerator
   def print_table_scores
     file = @file.empty? ? "score.json" : @file[0]
     file == @file[0] ? File.open(file, "w") : file
-    File.exist?("score.json") ? file : File.open(file, "w")
+    File.exist?(file) ? file : File.open(file, "w")
     if File.read(file).empty?
       puts print_score([{ "name" => "<Nobody>", "score" => 0 }])
     else

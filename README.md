@@ -1,7 +1,7 @@
 # CLIvia generator
 ## How to play!
 
-Put in the terminal ruby trivia_generator.rb
+Put in the terminal: `ruby trivia_generator.rb`
 
 ## Before starting!
 
